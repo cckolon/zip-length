@@ -1,0 +1,13 @@
+zipstrings = Import["C:\Users\Carl Kolon\Documents\Math\distancedata.csv","Data"]//Short;  (*Import the CSV list of zips, in vertical form*)
+
+sfhospital = GeoPosition[{37.76486,-122.39025}]; (*Geographic location of SF Benioff hospital. I just googled this.*)
+
+zipcodes=Cases[Interpreter["ZIPCode"][ToString/@Transpose[zipstrings[[1]]][[1]]],_Entity];  (*Translate the zipcodes to geographic entities*)
+
+td =Table[TravelDirections[{zipcodes[[i]],sfhospital}],{i,Length[zipcodes]}]; (*Create a table of the travel directions from each zipcode*)
+
+GeoGraphics[{
+		Table[{EdgeForm[Black],FaceForm[Red],Polygon[zipcodes[[i]]]},{i,Length[zipcodes]}], (*Plot polygons of each zipcode*)
+		Style[Line[td],Blue] (*Plot driving directions from each zipcode*)
+	},
+GeoCenter->{37.76486,-122.39025}+{1,1},GeoRange ->Quantity[150,"Miles"],ImageSize->Large] (*Image options and whatnot*)
